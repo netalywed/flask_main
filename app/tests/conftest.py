@@ -4,8 +4,8 @@ from pytest import fixture
 import os
 import sys
 
-sys.path.append(os.path.join(os.getcwd(), '..')) #позволяет обращаться к каталогам выше без прописывания полного пути
-from models import Base, engine, Session, UserModel
+#sys.path.append(os.path.join(os.getcwd(), '..')) #позволяет обращаться к каталогам выше без прописывания полного пути
+from app.models import Base, engine, Session, UserModel
 
 
 @fixture(scope='session', autouse=True)

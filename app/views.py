@@ -1,5 +1,5 @@
 from flask.views import MethodView
-from flask import jsonify
+from flask import jsonify, request
 from models import UserModel, Session
 
 
@@ -7,7 +7,7 @@ class UserView(MethodView):
 
     def get(self, art_id: int):
         with Session() as session:
-            article = session.query(UserModel).get(id)
+            article = session.query(UserModel).get(art_id)
             if article is None:
                 pass
 
@@ -20,13 +20,29 @@ class UserView(MethodView):
             })
 
     def post(self):
-        pass
+        article_data = request.json #получаем от клиента, на его основе создаем нового пользователя
+        with Session() as session:
+            new_article = UserModel(**article_data)
+            session.add(new_article)
+            session.commit()
+            return jsonify({'art_id': new_article.art_id, 'headline': new_article.headline, 'owner': new_article.owner})
 
-    def patch(self):
-        pass
+    def patch(self, art_id):
+        article_data = request.json
+        with Session() as session:
+            article = session.query(UserModel).get(art_id)
+            for field, value in article_data.items():
+                setattr(article, field, value)
+            session.add(article)
+            session.commit()
+            return jsonify({'art_id': article.art_id, 'headline': article.headline, 'owner': article.owner})
 
-    def delete(self):
-        pass
+    def delete(self, art_id: int):
+        with Session() as session:
+            article = session.query(UserModel).get(art_id)
+            session.delete(article)
+            session.commit()
+            return jsonify({'status': 'deleted'})
 
 
 

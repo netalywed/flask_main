@@ -17,13 +17,29 @@ def test_hello_world():
 def test_get_article_by_headline(create_article): # передаем в аргумент фикстуру
     new_article = create_article
     id_art = new_article["art_id"]
-    response = requests.get(f'http://127.0.0.1:5000/users/{id_art}')
-    # response = requests.get(f'http://127.0.0.1:5000/users/')
+    #response = requests.get(f'http://127.0.0.1:5000/user/{id_art}')
+    #response = requests.get(f'http://127.0.0.1:5000/users/')
+    response = requests.get(f'http://127.0.0.1:5000/user/{id_art}')
     assert response.status_code == 200
     response_data = response.json()
-    print(response_data)
     assert response_data["headline"] == new_article["headline"]
 
+
+def test_create_article(): # передаем в аргумент фикстуру
+    response = requests.post(f'http://127.0.0.1:5000/users/', json={'headline': 'name blah', 'owner': 'Kate'})
+    assert response.status_code == 200
+    json_data = response.json()
+    assert 'art_id' in json_data
+    assert json_data['headline'] == 'name blah'
+
+
+def test_patch_article(create_article): # передаем в аргумент фикстуру
+    response = requests.patch(f'http://127.0.0.1:5000/user/{create_article["art_id"]}', json={'headline': 'new name blah', 'owner': 'John'})
+    assert response.status_code == 200
+
+def test_patch_article(create_article): # передаем в аргумент фикстуру
+    response = requests.delete(f'http://127.0.0.1:5000/user/{create_article["art_id"]}')
+    assert response.status_code == 200
 
 
 # import uuid
